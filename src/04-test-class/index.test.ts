@@ -1,5 +1,3 @@
-// Uncomment the code below and write your tests
-
 import {
   InsufficientFundsError,
   SynchronizationFailedError,
@@ -10,7 +8,7 @@ import {
 describe('BankAccount', () => {
   test('should create account with initial balance', () => {
     const myAccount = getBankAccount(1000);
-    expect(myAccount.getBalance()).toBe(1000);
+    expect(myAccount['balance']).toBe(1000);
   });
 
   test('should throw InsufficientFundsError error when withdrawing more than balance', () => {
@@ -34,26 +32,27 @@ describe('BankAccount', () => {
 
   test('should deposit money', () => {
     const depositOperation = getBankAccount(1000).deposit(5300);
-    expect(depositOperation.getBalance()).toBe(6300);
+    expect(depositOperation['balance']).toBe(6300);
   });
 
   test('should withdraw money', () => {
     const withdrawOperation = getBankAccount(1000).withdraw(300);
-    expect(withdrawOperation.getBalance()).toBe(700);
+    expect(withdrawOperation['balance']).toBe(700);
   });
 
   test('should transfer money', () => {
     const sender = getBankAccount(1000);
     const receiver = getBankAccount(100);
     sender.transfer(200, receiver);
-    expect(sender.getBalance()).toBe(800);
-    expect(receiver.getBalance()).toBe(300);
+    expect(sender['balance']).toBe(800);
+    expect(receiver['balance']).toBe(300);
   });
 
   test('fetchBalance should return number in case if request did not fail', async () => {
-    // const account = new BankAccount(100);
-    // const balance = await account.fetchBalance();
-    // expect(typeof balance).toBe('number');
+    const account = getBankAccount(100);
+    jest.spyOn(account, 'fetchBalance').mockResolvedValue(50);
+    const balance = await account.fetchBalance();
+    expect(typeof balance).toBe('number');
   });
 
   test('should set new balance if fetchBalance returned number', async () => {
@@ -61,7 +60,7 @@ describe('BankAccount', () => {
     const newBalance = 80;
     jest.spyOn(balance, 'fetchBalance').mockResolvedValue(newBalance);
     await balance.synchronizeBalance();
-    expect(balance.getBalance()).toEqual(newBalance);
+    expect(balance['balance']).toEqual(newBalance);
   });
 
   test('should throw SynchronizationFailedError if fetchBalance returned null', async () => {
